@@ -1,4 +1,5 @@
 using BuildIT.Model;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
@@ -15,6 +16,8 @@ namespace BuildIT.Filters
         public override void OnException(ExceptionContext context)
         {
             _logger.LogError(context.Exception, context.Exception.Message);
+            _logger.LogError("Exception Type: {Type}", context.Exception.GetType().Name);
+            _logger.LogError("Exception StackTrace: {StackTrace}", context.Exception.StackTrace);
 
             if (context.Exception is UserException)
             {
@@ -23,7 +26,12 @@ namespace BuildIT.Filters
             }
             else
             {
-                context.ModelState.AddModelError("ERROR", "Greška na serveru, molimo provjerite logove");
+                var errorMessage = "Greška na serveru, molimo provjerite logove";
+                if (context.HttpContext.RequestServices.GetService<IHostEnvironment>()?.IsDevelopment() == true)
+                {
+                    errorMessage = context.Exception.Message + (context.Exception.InnerException != null ? " | Inner: " + context.Exception.InnerException.Message : "");
+                }
+                context.ModelState.AddModelError("ERROR", errorMessage);
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             }
 

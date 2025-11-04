@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ICompanyService, CompanyService>();
 
 builder.Services.AddControllers(x =>
 {
@@ -58,6 +59,16 @@ TypeAdapterConfig<BuildIT.Services.Database.User, BuildIT.Model.Models.User>.New
 TypeAdapterConfig<UserUpdateRequest, BuildIT.Services.Database.User>
     .NewConfig()
     .IgnoreNullValues(true);
+
+TypeAdapterConfig<CompanyInsertRequest, BuildIT.Services.Database.Company>
+    .NewConfig();
+
+TypeAdapterConfig<CompanyUpdateRequest, BuildIT.Services.Database.Company>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Company, BuildIT.Model.Models.Company>
+    .NewConfig();
 
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
