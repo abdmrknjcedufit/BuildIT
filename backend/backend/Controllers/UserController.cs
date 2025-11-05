@@ -23,6 +23,19 @@ namespace BuildIT.Controllers
             return base.Insert(request);
         }
 
+        [HttpGet("user-types")]
+        [AllowAnonymous]
+        public IActionResult GetUserTypes()
+        {
+            var userTypes = new[]
+            {
+                new { value = "Individual", label = "Kupac/Fizičko lice" },
+                new { value = "Company", label = "Firma/Pravno lice" }
+            };
+
+            return Ok(userTypes);
+        }
+
         [HttpPost("login")]
         [AllowAnonymous]
         public IActionResult Login([FromBody] LoginRequest request)

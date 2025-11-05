@@ -9,6 +9,7 @@ namespace BuildIT.Model.Models
         public string Email { get; set; } = null!;
         public string? Phone { get; set; }
         public DateOnly BirthDate { get; set; }
+        public string UserType { get; set; } = "Individual";
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<string> Roles { get; set; } = new();

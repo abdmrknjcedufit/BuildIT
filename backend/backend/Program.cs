@@ -20,6 +20,9 @@ builder.Services.AddTransient<ICompanyService, CompanyService>();
 builder.Services.AddTransient<IItemService, ItemService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ISubcategoryService, SubcategoryService>();
+builder.Services.AddTransient<IListingService, ListingService>();
+builder.Services.AddTransient<ICityService, CityService>();
+builder.Services.AddTransient<ITransactionService, TransactionService>();
 
 builder.Services.AddControllers(x =>
 {
@@ -103,6 +106,36 @@ TypeAdapterConfig<SubcategoryUpdateRequest, BuildIT.Services.Database.Subcategor
     .IgnoreNullValues(true);
 
 TypeAdapterConfig<BuildIT.Services.Database.Subcategory, BuildIT.Model.Models.Subcategory>
+    .NewConfig();
+
+TypeAdapterConfig<ListingInsertRequest, BuildIT.Services.Database.Listing>
+    .NewConfig();
+
+TypeAdapterConfig<ListingUpdateRequest, BuildIT.Services.Database.Listing>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Listing, BuildIT.Model.Models.Listing>
+    .NewConfig();
+
+TypeAdapterConfig<CityInsertRequest, BuildIT.Services.Database.City>
+    .NewConfig();
+
+TypeAdapterConfig<CityUpdateRequest, BuildIT.Services.Database.City>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.City, BuildIT.Model.Models.City>
+    .NewConfig();
+
+TypeAdapterConfig<TransactionInsertRequest, BuildIT.Services.Database.Transaction>
+    .NewConfig();
+
+TypeAdapterConfig<TransactionUpdateRequest, BuildIT.Services.Database.Transaction>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Transaction, BuildIT.Model.Models.Transaction>
     .NewConfig();
 
 builder.Services.AddAuthentication("BasicAuthentication")

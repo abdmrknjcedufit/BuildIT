@@ -10,6 +10,7 @@ namespace BuildIT.Model.Requests
         public string Password { get; set; } = null!;
         public string PasswordConfirm { get; set; } = null!;
         public DateOnly BirthDate { get; set; }
+        public string UserType { get; set; } = "Individual";
         public string Role { get; set; } = "User";
     }
 }

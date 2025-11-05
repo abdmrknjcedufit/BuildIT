@@ -11,6 +11,7 @@ public partial class User
     public string PasswordHash { get; set; } = null!;
     public string PasswordSalt { get; set; } = null!;
     public DateOnly BirthDate { get; set; }
+    public string UserType { get; set; } = "Individual";
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();

@@ -76,6 +76,13 @@ namespace BuildIT.Services.Services
             if (request.Password != request.PasswordConfirm)
                 throw new UserException("Lozinka i potvrda lozinke se ne podudaraju");
 
+            if (string.IsNullOrWhiteSpace(request.UserType))
+                request.UserType = "Individual";
+
+            if (request.UserType != "Individual" && request.UserType != "Company")
+                throw new UserException("UserType mora biti 'Individual' ili 'Company'");
+
+            entity.UserType = request.UserType;
             entity.PasswordSalt = HashGenerator.GenerateSalt();
             entity.PasswordHash = HashGenerator.GenerateHash(entity.PasswordSalt, request.Password);
             entity.IsActive = true;
