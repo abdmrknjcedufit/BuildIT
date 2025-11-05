@@ -8,8 +8,8 @@ namespace BuildIT.Services.Services
 {
     public abstract class BaseService<TModel, TSearch, TDbEntity> : IService<TModel, TSearch> where TSearch : BaseSearchObject where TDbEntity : class where TModel : class
     {
-        public BuildITDbContext Context { get; set; }
-        public IMapper Mapper;
+        protected BuildITDbContext Context { get; }
+        protected IMapper Mapper { get; }
         public BaseService(BuildITDbContext context, IMapper mapper)
         {
             Context = context;

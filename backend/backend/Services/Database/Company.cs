@@ -17,5 +17,6 @@ public partial class Company
 
     public virtual User User { get; set; } = null!;
     public virtual City? City { get; set; }
+    public virtual ICollection<Item> Items { get; set; } = new List<Item>();
 }
 

@@ -18,6 +18,9 @@ public partial class BuildITDbContext : DbContext
     public virtual DbSet<UserRole> UserRoles { get; set; }
     public virtual DbSet<Company> Companies { get; set; }
     public virtual DbSet<City> Cities { get; set; }
+    public virtual DbSet<Category> Categories { get; set; }
+    public virtual DbSet<Subcategory> Subcategories { get; set; }
+    public virtual DbSet<Item> Items { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -63,6 +66,23 @@ public partial class BuildITDbContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
         });
 
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Description).HasMaxLength(200).IsRequired();
+        });
+
+        modelBuilder.Entity<Subcategory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Description).HasMaxLength(200).IsRequired();
+
+            entity.HasOne(e => e.Category)
+                .WithMany(c => c.Subcategories)
+                .HasForeignKey(e => e.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
         modelBuilder.Entity<Company>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -87,6 +107,31 @@ public partial class BuildITDbContext : DbContext
                 .OnDelete(DeleteBehavior.SetNull);
         });
 
+        modelBuilder.Entity<Item>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(2000);
+            entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.ItemType).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Status).HasMaxLength(50).HasDefaultValue("Available");
+            entity.Property(e => e.Condition).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Brand).HasMaxLength(100);
+            entity.Property(e => e.Model).HasMaxLength(100);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(e => e.Company)
+                .WithMany(c => c.Items)
+                .HasForeignKey(e => e.CompanyId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Category)
+                .WithMany(c => c.Items)
+                .HasForeignKey(e => e.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

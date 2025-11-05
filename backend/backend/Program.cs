@@ -6,6 +6,7 @@ using BuildIT.Services.Services;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using BuildIT.Model.Requests;
@@ -16,10 +17,14 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<ICompanyService, CompanyService>();
+builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<ISubcategoryService, SubcategoryService>();
 
 builder.Services.AddControllers(x =>
 {
     x.Filters.Add<ExceptionFilter>();
+    x.Filters.Add<AuthorizationFilter>();
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -68,6 +73,36 @@ TypeAdapterConfig<CompanyUpdateRequest, BuildIT.Services.Database.Company>
     .IgnoreNullValues(true);
 
 TypeAdapterConfig<BuildIT.Services.Database.Company, BuildIT.Model.Models.Company>
+    .NewConfig();
+
+TypeAdapterConfig<ItemInsertRequest, BuildIT.Services.Database.Item>
+    .NewConfig();
+
+TypeAdapterConfig<ItemUpdateRequest, BuildIT.Services.Database.Item>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Item, BuildIT.Model.Models.Item>
+    .NewConfig();
+
+TypeAdapterConfig<CategoryInsertRequest, BuildIT.Services.Database.Category>
+    .NewConfig();
+
+TypeAdapterConfig<CategoryUpdateRequest, BuildIT.Services.Database.Category>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Category, BuildIT.Model.Models.Category>
+    .NewConfig();
+
+TypeAdapterConfig<SubcategoryInsertRequest, BuildIT.Services.Database.Subcategory>
+    .NewConfig();
+
+TypeAdapterConfig<SubcategoryUpdateRequest, BuildIT.Services.Database.Subcategory>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Subcategory, BuildIT.Model.Models.Subcategory>
     .NewConfig();
 
 builder.Services.AddAuthentication("BasicAuthentication")

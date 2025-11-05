@@ -4,6 +4,7 @@ using BuildIT.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace backend.Migrations
 {
     [DbContext(typeof(BuildITDbContext))]
-    partial class BuildITDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251105000427_AddItemEntity")]
+    partial class AddItemEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,24 +24,6 @@ namespace backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BuildIT.Services.Database.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
 
             modelBuilder.Entity("BuildIT.Services.Database.City", b =>
                 {
@@ -134,9 +119,6 @@ namespace backend.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("CompanyId")
                         .HasColumnType("int");
 
@@ -208,8 +190,6 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("CompanyId");
 
                     b.ToTable("Items");
@@ -231,29 +211,6 @@ namespace backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("BuildIT.Services.Database.Subcategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("Subcategories");
                 });
 
             modelBuilder.Entity("BuildIT.Services.Database.User", b =>
@@ -360,30 +317,12 @@ namespace backend.Migrations
 
             modelBuilder.Entity("BuildIT.Services.Database.Item", b =>
                 {
-                    b.HasOne("BuildIT.Services.Database.Category", "Category")
-                        .WithMany("Items")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("BuildIT.Services.Database.Company", "Company")
                         .WithMany("Items")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.Navigation("Category");
-
                     b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("BuildIT.Services.Database.Subcategory", b =>
-                {
-                    b.HasOne("BuildIT.Services.Database.Category", "Category")
-                        .WithMany("Subcategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("BuildIT.Services.Database.UserRole", b =>
@@ -403,13 +342,6 @@ namespace backend.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BuildIT.Services.Database.Category", b =>
-                {
-                    b.Navigation("Items");
-
-                    b.Navigation("Subcategories");
                 });
 
             modelBuilder.Entity("BuildIT.Services.Database.City", b =>

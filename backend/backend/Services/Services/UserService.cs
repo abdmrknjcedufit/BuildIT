@@ -34,17 +34,17 @@ namespace BuildIT.Services.Services
                 !x.UserRoles.Any(ur => ur.Role != null && ur.Role.Name == "Admin")
             );
 
-            if (search.FromDate.HasValue)
+            if (search != null && search.FromDate.HasValue)
             {
                 filteredQuery = filteredQuery.Where(x => x.BirthDate >= search.FromDate.Value);
             }
 
-            if (search.ToDate.HasValue)
+            if (search != null && search.ToDate.HasValue)
             {
                 filteredQuery = filteredQuery.Where(x => x.BirthDate <= search.ToDate.Value);
             }
 
-            if (search.IsActive.HasValue)
+            if (search != null && search.IsActive.HasValue)
             {
                 filteredQuery = filteredQuery.Where(x => x.IsActive == search.IsActive.Value);
             }

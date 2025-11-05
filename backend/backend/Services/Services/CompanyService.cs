@@ -28,12 +28,12 @@ namespace BuildIT.Services.Services
                     (x.Email != null && x.Email.Contains(fts)));
             }
 
-            if (search.IsActive.HasValue)
+            if (search != null && search.IsActive.HasValue)
             {
                 filteredQuery = filteredQuery.Where(x => x.IsActive == search.IsActive.Value);
             }
 
-            if (search.UserId.HasValue)
+            if (search != null && search.UserId.HasValue)
             {
                 filteredQuery = filteredQuery.Where(x => x.UserId == search.UserId.Value);
             }
