@@ -23,6 +23,11 @@ public partial class BuildITDbContext : DbContext
     public virtual DbSet<Item> Items { get; set; }
     public virtual DbSet<Listing> Listings { get; set; }
     public virtual DbSet<Transaction> Transactions { get; set; }
+    public virtual DbSet<Review> Reviews { get; set; }
+    public virtual DbSet<Notification> Notifications { get; set; }
+    public virtual DbSet<Complaint> Complaints { get; set; }
+    public virtual DbSet<Order> Orders { get; set; }
+    public virtual DbSet<AuditLog> AuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -193,6 +198,129 @@ public partial class BuildITDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.SellerId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TargetType).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Comment).HasMaxLength(2000);
+            entity.Property(e => e.Rating).IsRequired();
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime");
+
+            entity.HasOne(e => e.Reviewer)
+                .WithMany()
+                .HasForeignKey(e => e.ReviewerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Transaction)
+                .WithMany()
+                .HasForeignKey(e => e.TransactionId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Message).HasMaxLength(2000).IsRequired();
+            entity.Property(e => e.NotificationType).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Priority).HasMaxLength(50).IsRequired().HasDefaultValue("Normal");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.SentAt)
+                .HasColumnType("datetime");
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Complaint>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TargetType).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Subject).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(4000).IsRequired();
+            entity.Property(e => e.Status).HasMaxLength(50).IsRequired().HasDefaultValue("Open");
+            entity.Property(e => e.Priority).HasMaxLength(50).IsRequired().HasDefaultValue("Medium");
+            entity.Property(e => e.Attachment).HasMaxLength(1000);
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime");
+            entity.Property(e => e.ResolvedAt)
+                .HasColumnType("datetime");
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Order)
+                .WithMany()
+                .HasForeignKey(e => e.OrderId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.OrderNumber).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Status).HasMaxLength(50).IsRequired().HasDefaultValue("Pending");
+            entity.Property(e => e.OrderType).HasMaxLength(50).IsRequired().HasDefaultValue("Purchase");
+            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.TaxAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.FinalAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.PaymentMethod).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.PaymentStatus).HasMaxLength(50).IsRequired().HasDefaultValue("Pending");
+            entity.Property(e => e.ShippingAddress).HasMaxLength(1000);
+            entity.Property(e => e.BillingAddress).HasMaxLength(1000);
+            entity.Property(e => e.Priority).HasMaxLength(50).IsRequired().HasDefaultValue("Normal");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("datetime");
+            entity.Property(e => e.ExpectedDeliveryDate)
+                .HasColumnType("datetime");
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Transaction)
+                .WithMany()
+                .HasForeignKey(e => e.TransactionId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Timestamp)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Username).HasMaxLength(100);
+            entity.Property(e => e.Action).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.EntityId).HasMaxLength(100);
+            entity.Property(e => e.RequestData).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.ResponseStatus).HasMaxLength(50).IsRequired();
+            entity.Property(e => e.Message).HasMaxLength(2000);
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         OnModelCreatingPartial(modelBuilder);

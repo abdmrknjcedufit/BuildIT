@@ -23,11 +23,19 @@ builder.Services.AddTransient<ISubcategoryService, SubcategoryService>();
 builder.Services.AddTransient<IListingService, ListingService>();
 builder.Services.AddTransient<ICityService, CityService>();
 builder.Services.AddTransient<ITransactionService, TransactionService>();
+builder.Services.AddTransient<IReviewService, ReviewService>();
+builder.Services.AddTransient<INotificationService, NotificationService>();
+builder.Services.AddTransient<IComplaintService, ComplaintService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IAuditLogService, AuditLogService>();
+
+builder.Services.AddScoped<AuditLogActionFilter>();
 
 builder.Services.AddControllers(x =>
 {
     x.Filters.Add<ExceptionFilter>();
     x.Filters.Add<AuthorizationFilter>();
+    x.Filters.Add<AuditLogActionFilter>();
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -136,6 +144,49 @@ TypeAdapterConfig<TransactionUpdateRequest, BuildIT.Services.Database.Transactio
     .IgnoreNullValues(true);
 
 TypeAdapterConfig<BuildIT.Services.Database.Transaction, BuildIT.Model.Models.Transaction>
+    .NewConfig();
+
+TypeAdapterConfig<ReviewInsertRequest, BuildIT.Services.Database.Review>
+    .NewConfig();
+
+TypeAdapterConfig<ReviewUpdateRequest, BuildIT.Services.Database.Review>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Review, BuildIT.Model.Models.Review>
+    .NewConfig();
+
+TypeAdapterConfig<NotificationInsertRequest, BuildIT.Services.Database.Notification>
+    .NewConfig();
+
+TypeAdapterConfig<NotificationUpdateRequest, BuildIT.Services.Database.Notification>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Notification, BuildIT.Model.Models.Notification>
+    .NewConfig();
+
+TypeAdapterConfig<ComplaintInsertRequest, BuildIT.Services.Database.Complaint>
+    .NewConfig();
+
+TypeAdapterConfig<ComplaintUpdateRequest, BuildIT.Services.Database.Complaint>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Complaint, BuildIT.Model.Models.Complaint>
+    .NewConfig();
+
+TypeAdapterConfig<OrderInsertRequest, BuildIT.Services.Database.Order>
+    .NewConfig();
+
+TypeAdapterConfig<OrderUpdateRequest, BuildIT.Services.Database.Order>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Order, BuildIT.Model.Models.Order>
+    .NewConfig();
+
+TypeAdapterConfig<BuildIT.Services.Database.AuditLog, BuildIT.Model.Models.AuditLog>
     .NewConfig();
 
 builder.Services.AddAuthentication("BasicAuthentication")
