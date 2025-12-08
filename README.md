@@ -55,3 +55,7 @@ Prije korištenja aplikacije pročitati napomene koje se mogu pronaći u ovom re
 
 - **RabbitMQ** je korišten za slanje mailova prodavcima za obavještenja o njihovim kupljenim artiklima.
 - Također se u slučaju primitka novih poruka u chatu.
+
+## Color-coded calendar
+
+- Ako je oglas postavljen kao iznajmljivanje, onda korisnik ima pristup pregledu dana kada je artikal već rezervisan tj. zauzet, to je označeno crvenom bojom.
