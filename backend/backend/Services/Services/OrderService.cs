@@ -4,6 +4,7 @@ using BuildIT.Model.SearchObjects;
 using BuildIT.Services.Database;
 using BuildIT.Services.Interfaces;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuildIT.Services.Services
 {
@@ -149,6 +150,69 @@ namespace BuildIT.Services.Services
             }
 
             entity.UpdatedAt = DateTime.UtcNow;
+        }
+
+        public override Model.Models.Order GetById(int id)
+        {
+            var entity = Context.Orders
+                .Include(x => x.User)
+                .Include(x => x.Transaction)
+                    .ThenInclude(t => t.Listing)
+                        .ThenInclude(l => l.Item)
+                .Include(x => x.Transaction)
+                    .ThenInclude(t => t.Seller)
+                .Include(x => x.DeliveryProvider)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (entity == null)
+            {
+                throw new UserException("Narudžba nije pronađena");
+            }
+
+            var mappedOrder = new Model.Models.Order
+            {
+                Id = entity.Id,
+                UserId = entity.UserId,
+                OrderNumber = entity.OrderNumber,
+                Status = entity.Status,
+                OrderType = entity.OrderType,
+                TotalAmount = entity.TotalAmount,
+                DiscountAmount = entity.DiscountAmount,
+                TaxAmount = entity.TaxAmount,
+                FinalAmount = entity.FinalAmount,
+                PaymentMethod = entity.PaymentMethod,
+                PaymentStatus = entity.PaymentStatus,
+                TransactionId = entity.TransactionId,
+                ShippingAddress = entity.ShippingAddress,
+                BillingAddress = entity.BillingAddress,
+                ExpectedDeliveryDate = entity.ExpectedDeliveryDate,
+                CreatedAt = entity.CreatedAt,
+                UpdatedAt = entity.UpdatedAt,
+                IsInvoiceGenerated = entity.IsInvoiceGenerated,
+                Priority = entity.Priority,
+                DeliveryProviderId = entity.DeliveryProviderId,
+                DeliveryType = entity.DeliveryType,
+                User = entity.User != null ? Mapper.Map<Model.Models.User>(entity.User) : null,
+                Transaction = entity.Transaction != null ? new Model.Models.Transaction
+                {
+                    Id = entity.Transaction.Id,
+                    ListingId = entity.Transaction.ListingId,
+                    BuyerId = entity.Transaction.BuyerId,
+                    SellerId = entity.Transaction.SellerId,
+                    Amount = entity.Transaction.Amount,
+                    Status = entity.Transaction.Status,
+                    PaymentMethod = entity.Transaction.PaymentMethod,
+                    Type = entity.Transaction.Type,
+                    TransactionDate = entity.Transaction.TransactionDate,
+                    StripeTransactionId = entity.Transaction.StripeTransactionId,
+                    CreatedAt = entity.Transaction.CreatedAt,
+                    Listing = entity.Transaction.Listing != null ? Mapper.Map<Model.Models.Listing>(entity.Transaction.Listing) : null,
+                    Seller = entity.Transaction.Seller != null ? Mapper.Map<Model.Models.User>(entity.Transaction.Seller) : null
+                } : null,
+                DeliveryProvider = entity.DeliveryProvider != null ? Mapper.Map<Model.Models.DeliveryProvider>(entity.DeliveryProvider) : null
+            };
+
+            return mappedOrder;
         }
     }
 }

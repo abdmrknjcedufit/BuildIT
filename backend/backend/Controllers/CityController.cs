@@ -17,7 +17,7 @@ namespace BuildIT.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public override IActionResult Delete(int id)
         {
             _service.DeleteCity(id);
             return NoContent();

@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "VT25Q5lVw+UwnzzVUqSZRuSnr79UhTrRPK1EIUJB4/k=",
+  "Source": "BuildIT.API",
+  "BasePath": "_content/BuildIT.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

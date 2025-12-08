@@ -1,0 +1,12 @@
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\obj\Debug\net8.0\BuildIT.Model.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\obj\Debug\net8.0\BuildIT.Model.AssemblyInfoInputs.cache
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\obj\Debug\net8.0\BuildIT.Model.AssemblyInfo.cs
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\obj\Debug\net8.0\BuildIT.Model.csproj.CoreCompileInputs.cache
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\obj\Debug\net8.0\BuildIT.Model.sourcelink.json
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\bin\Debug\net8.0\BuildIT.Model.deps.json
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\bin\Debug\net8.0\BuildIT.Model.dll
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\bin\Debug\net8.0\BuildIT.Model.pdb
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\obj\Debug\net8.0\BuildIT.Model.dll
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\obj\Debug\net8.0\refint\BuildIT.Model.dll
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\obj\Debug\net8.0\BuildIT.Model.pdb
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\BuildIT.Model\obj\Debug\net8.0\ref\BuildIT.Model.dll

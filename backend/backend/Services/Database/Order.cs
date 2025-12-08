@@ -21,7 +21,13 @@ public partial class Order
     public DateTime? UpdatedAt { get; set; }
     public bool IsInvoiceGenerated { get; set; } = false;
     public string Priority { get; set; } = "Normal";
+    public int? DeliveryProviderId { get; set; }
+    public string? DeliveryType { get; set; }
+    public int? RentalDays { get; set; }
+    public DateTime? RentalStartDate { get; set; }
+    public DateTime? RentalEndDate { get; set; }
 
     public virtual User User { get; set; } = null!;
     public virtual Transaction? Transaction { get; set; }
+    public virtual DeliveryProvider? DeliveryProvider { get; set; }
 }

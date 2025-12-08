@@ -18,5 +18,10 @@ namespace BuildIT.Model.Requests
         public DateTime? ExpectedDeliveryDate { get; set; }
         public bool IsInvoiceGenerated { get; set; } = false;
         public string Priority { get; set; } = "Normal";
+        public int? DeliveryProviderId { get; set; }
+        public string? DeliveryType { get; set; }
+        public int? RentalDays { get; set; }
+        public DateTime? RentalStartDate { get; set; }
+        public DateTime? RentalEndDate { get; set; }
     }
 }

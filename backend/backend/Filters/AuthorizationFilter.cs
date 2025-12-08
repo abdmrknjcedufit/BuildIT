@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Net;
+using System.Linq;
 
 namespace BuildIT.Filters
 {
@@ -9,6 +11,23 @@ namespace BuildIT.Filters
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
+            var actionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+            
+            if (actionDescriptor != null)
+            {
+                var allowAnonymousOnAction = actionDescriptor.MethodInfo.GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Length > 0;
+                var allowAnonymousOnController = actionDescriptor.ControllerTypeInfo.GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Length > 0;
+                
+                if (allowAnonymousOnAction || allowAnonymousOnController)
+                {
+                    return;
+                }
+            }
+            else if (context.ActionDescriptor.EndpointMetadata.Any(em => em is AllowAnonymousAttribute))
+            {
+                return;
+            }
+
             if (context.ActionDescriptor.EndpointMetadata.Any(em => em is AuthorizeAttribute))
             {
                 if (!context.HttpContext.User.Identity?.IsAuthenticated ?? true)

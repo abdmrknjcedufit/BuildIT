@@ -21,5 +21,13 @@ namespace BuildIT.Model.Models
         public DateTime? UpdatedAt { get; set; }
         public bool IsInvoiceGenerated { get; set; }
         public string Priority { get; set; } = null!;
-    }
+    public int? DeliveryProviderId { get; set; }
+    public string? DeliveryType { get; set; }
+    public int? RentalDays { get; set; }
+    public DateTime? RentalStartDate { get; set; }
+    public DateTime? RentalEndDate { get; set; }
+    public User? User { get; set; }
+    public Transaction? Transaction { get; set; }
+    public DeliveryProvider? DeliveryProvider { get; set; }
+}
 }

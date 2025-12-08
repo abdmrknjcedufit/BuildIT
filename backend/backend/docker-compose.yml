@@ -1,24 +1,93 @@
-version: '3.8'
-
+#version: '3'
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: buildit-sqlserver
+#mssql docker
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: rabbitmq
+    hostname: "rabbitmq"
+    labels:
+        NAME: "rabbitmq"
+    restart: unless-stopped
+    environment:
+        - RABBITMQ_DEFAULT_USER=${_rabbitMqUser}
+        - RABBITMQ_DEFAULT_PASS=${_rabbitMqPassword}
+    ports:
+        - "15672:15672"
+        - "5672:5672"
+    expose:
+        - 5672
+        - 15672
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:15672"]
+        interval: 30s
+        timeout: 10s
+        retries: 10
+    networks:
+      - tripticketnet2025
+
+  tripticket-sql:
+    image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+    restart: unless-stopped
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=QWEasd123!
-      - MSSQL_PID=Express
+      - SA_PASSWORD=${_saPassword}
+      - MSSQL_PID=Developer
     ports:
-      - "1433:1433"
-    volumes:
-      - sqlserver_data:/var/opt/mssql
-    healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P QWEasd123! -Q "SELECT 1" || exit 1
-      interval: 10s
-      timeout: 3s
-      retries: 10
-      start_period: 30s
+      - 1401:1433
+    expose:
+      - 1433
+    networks:
+      - tripticketnet2025
 
-volumes:
-  sqlserver_data:
+  tripticket-api:
+    restart: unless-stopped
+    build:
+      context: .
+    environment:
+      - ConnectionStrings:TripTicketDB=Server=${_source},1433;Database=${_catalog};User=sa;Password=${_saPassword};ConnectRetryCount=0; TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+      - _fromAddress=${_fromAddress}
+      - _password=${_password}
+      - _host=${_host}
+      - _enableSSL=${_enableSSL}
+      - _displayName=${_displayName}
+      - _timeout=${_timeout}
+      - _port=${_port}
+      - _rabbitMqHost=${_rabbitMqHost}
+      - _rabbitMqUser=${_rabbitMqUser}
+      - _rabbitMqPassword=${_rabbitMqPassword}
+      - _rabbitMqPort=${_rabbitMqPort}
+      - _saPassword=${_saPassword}
+      - _stripe=${_stripe}
+    ports:
+      - 5255:5255
+    networks:
+      - tripticketnet2025
+    depends_on:
+      - tripticket-sql
+      - rabbitmq
 
+  tripticket-console:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: tripTicket.Subscriber/Dockerfile
+    depends_on:
+      - rabbitmq
+    environment:
+        - _fromAddress=${_fromAddress}
+        - _password=${_password}
+        - _host=${_host}
+        - _enableSSL=${_enableSSL}
+        - _displayName=${_displayName}
+        - _timeout=${_timeout}
+        - _port=${_port}
+        - _rabbitMqHost=${_rabbitMqHost}
+        - _rabbitMqUser=${_rabbitMqUser}
+        - _rabbitMqPassword=${_rabbitMqPassword}
+        - _rabbitMqPort=${_rabbitMqPort}
+    networks:
+      - tripticketnet2025      
+networks:
+  tripticketnet2025:
+    driver: bridge       

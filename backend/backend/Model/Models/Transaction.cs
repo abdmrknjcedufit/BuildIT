@@ -13,6 +13,8 @@ namespace BuildIT.Model.Models
         public DateTime TransactionDate { get; set; }
         public string? StripeTransactionId { get; set; }
         public DateTime CreatedAt { get; set; }
+        public Listing? Listing { get; set; }
+        public User? Seller { get; set; }
     }
 }
 

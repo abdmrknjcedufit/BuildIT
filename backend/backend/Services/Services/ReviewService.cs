@@ -40,6 +40,11 @@ namespace BuildIT.Services.Services
                 filteredQuery = filteredQuery.Where(x => x.TargetId == search.TargetId.Value);
             }
 
+            if (search != null && search.TransactionId.HasValue)
+            {
+                filteredQuery = filteredQuery.Where(x => x.TransactionId == search.TransactionId.Value);
+            }
+
             if (search != null && search.MinRating.HasValue)
             {
                 filteredQuery = filteredQuery.Where(x => x.Rating >= search.MinRating.Value);
@@ -76,6 +81,14 @@ namespace BuildIT.Services.Services
                 if (!transactionExists)
                 {
                     throw new UserException("Transakcija nije pronađena.");
+                }
+
+                var existingReview = Context.Reviews
+                    .FirstOrDefault(r => r.TransactionId == request.TransactionId.Value && 
+                                        r.ReviewerId == request.ReviewerId);
+                if (existingReview != null)
+                {
+                    throw new UserException("Već ste ostavili ocjenu za ovu narudžbu.");
                 }
             }
 
@@ -135,10 +148,10 @@ namespace BuildIT.Services.Services
 
             if (normalizedType == "Item")
             {
-                var exists = Context.Items.Any(i => i.Id == targetId);
-                if (!exists)
+                var listingExists = Context.Listings.Any(l => l.Id == targetId);
+                if (!listingExists)
                 {
-                    throw new UserException("Artikal nije pronađen.");
+                    throw new UserException("Oglas nije pronađen.");
                 }
             }
             else if (normalizedType == "Company")

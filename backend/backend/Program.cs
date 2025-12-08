@@ -1,5 +1,6 @@
 using BuildIT;
 using BuildIT.Filters;
+using BuildIT.Hubs;
 using BuildIT.Services.Database;
 using BuildIT.Services.Interfaces;
 using BuildIT.Services.Services;
@@ -28,14 +29,31 @@ builder.Services.AddTransient<INotificationService, NotificationService>();
 builder.Services.AddTransient<IComplaintService, ComplaintService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IAuditLogService, AuditLogService>();
+builder.Services.AddTransient<IDashboardService, DashboardService>();
+builder.Services.AddTransient<ICartService, CartService>();
+builder.Services.AddTransient<IConversationService, ConversationService>();
+builder.Services.AddTransient<IMessageService, MessageService>();
+builder.Services.AddTransient<IDeliveryProviderService, DeliveryProviderService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<ISmsService, SmsService>();
+builder.Services.AddSingleton<IRabbitMQService, RabbitMQService>();
+builder.Services.AddTransient<IFavoriteService, FavoriteService>();
+builder.Services.AddHostedService<OrderNotificationService>();
 
 builder.Services.AddScoped<AuditLogActionFilter>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers(x =>
 {
     x.Filters.Add<ExceptionFilter>();
     x.Filters.Add<AuthorizationFilter>();
     x.Filters.Add<AuditLogActionFilter>();
+})
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -214,6 +232,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chathub");
 
 using (var scope = app.Services.CreateScope())
 {
@@ -323,3 +342,9 @@ static void SeedData(BuildITDbContext context, ILogger logger)
         logger.LogError(ex, "Error seeding data: {Message}", ex.Message);
     }
 }
+
+TypeAdapterConfig<FavoriteInsertRequest, BuildIT.Services.Database.Favorite>
+    .NewConfig();
+
+TypeAdapterConfig<BuildIT.Services.Database.Favorite, BuildIT.Model.Models.Favorite>
+    .NewConfig();

@@ -1,0 +1,6 @@
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\HelperService\HelperService\obj\Debug\net8.0\HelperService.csproj.AssemblyReference.cache
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\HelperService\HelperService\obj\Debug\net8.0\HelperService.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\HelperService\HelperService\obj\Debug\net8.0\HelperService.AssemblyInfoInputs.cache
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\HelperService\HelperService\obj\Debug\net8.0\HelperService.AssemblyInfo.cs
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\HelperService\HelperService\obj\Debug\net8.0\HelperService.csproj.CoreCompileInputs.cache
+C:\Users\Abdullah\Desktop\BuildIT\BuildIT\HelperService\HelperService\obj\Debug\net8.0\HelperService.sourcelink.json
