@@ -1,0 +1,119 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: buildit-rabbitmq
+    hostname: rabbitmq
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    ports:
+      - "${RABBITMQ_MANAGEMENT_PORT}:15672"
+      - "${RABBITMQ_PORT}:5672"
+    expose:
+      - 5672
+      - 15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - builditnet2025
+
+  buildit-sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: buildit-sql
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+      - MSSQL_PID=Developer
+    ports:
+      - 1403:1433
+    expose:
+      - 1433
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -Q "SELECT 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - sql_data:/var/opt/mssql
+    networks:
+      - builditnet2025
+
+  buildit-api:
+    container_name: buildit-api
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ASPNETCORE_URLS=http://+:5031
+      - ConnectionStrings__BuildITDB=Server=buildit-sql,1433;Database=${DATABASE_NAME};User=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;ConnectRetryCount=10;Connect Timeout=60;
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=${RABBITMQ_PORT}
+      - RabbitMQ__UserName=${RABBITMQ_USER}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD}
+      - Email__SmtpHost=${EMAIL_SMTP_HOST}
+      - Email__SmtpPort=${EMAIL_SMTP_PORT}
+      - Email__SmtpUsername=${EMAIL_SMTP_USERNAME}
+      - Email__SmtpPassword=${EMAIL_SMTP_PASSWORD}
+      - Email__UseSsl=${EMAIL_USE_SSL}
+      - Email__FromEmail=${EMAIL_FROM_EMAIL}
+      - Email__FromName=${EMAIL_FROM_NAME}
+      - SMS__Provider=${SMS_PROVIDER}
+      - SMS__ApiKey=${SMS_API_KEY}
+      - SMS__ApiSecret=${SMS_API_SECRET}
+      - SMS__FromNumber=${SMS_FROM_NUMBER}
+      - Stripe__SecretKey=${STRIPE_SECRET_KEY}
+      - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY}
+      - ApiBaseUrl=${API_BASE_URL}
+    ports:
+      - "${API_PORT}:5031"
+    networks:
+      - builditnet2025
+    depends_on:
+      - buildit-sql
+      - rabbitmq
+
+  buildit-subscriber:
+    container_name: buildit-subscriber
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: BuildIT.Subscriber/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__Port=${RABBITMQ_PORT}
+      - RabbitMQ__UserName=${RABBITMQ_USER}
+      - RabbitMQ__Password=${RABBITMQ_PASSWORD}
+      - RabbitMQ__QueueName=${RABBITMQ_QUEUE_NAME}
+      - Email__SmtpHost=${EMAIL_SMTP_HOST}
+      - Email__SmtpPort=${EMAIL_SMTP_PORT}
+      - Email__SmtpUsername=${EMAIL_SMTP_USERNAME}
+      - Email__SmtpPassword=${EMAIL_SMTP_PASSWORD}
+      - Email__UseSsl=${EMAIL_USE_SSL}
+      - Email__FromEmail=${EMAIL_FROM_EMAIL}
+      - Email__FromName=${EMAIL_FROM_NAME}
+    networks:
+      - builditnet2025
+    depends_on:
+      - rabbitmq
+
+volumes:
+  rabbitmq_data:
+    driver: local
+  sql_data:
+    driver: local
+
+networks:
+  builditnet2025:
+    driver: bridge
+

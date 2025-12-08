@@ -1,11 +1,13 @@
 using BuildIT;
 using BuildIT.Filters;
+using BuildIT.Hubs;
 using BuildIT.Services.Database;
 using BuildIT.Services.Interfaces;
 using BuildIT.Services.Services;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using BuildIT.Model.Requests;
@@ -15,10 +17,43 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<ICompanyService, CompanyService>();
+builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<ISubcategoryService, SubcategoryService>();
+builder.Services.AddTransient<IListingService, ListingService>();
+builder.Services.AddTransient<ICityService, CityService>();
+builder.Services.AddTransient<ITransactionService, TransactionService>();
+builder.Services.AddTransient<IReviewService, ReviewService>();
+builder.Services.AddTransient<INotificationService, NotificationService>();
+builder.Services.AddTransient<IComplaintService, ComplaintService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IAuditLogService, AuditLogService>();
+builder.Services.AddTransient<IDashboardService, DashboardService>();
+builder.Services.AddTransient<ICartService, CartService>();
+builder.Services.AddTransient<IConversationService, ConversationService>();
+builder.Services.AddTransient<IMessageService, MessageService>();
+builder.Services.AddTransient<IDeliveryProviderService, DeliveryProviderService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<ISmsService, SmsService>();
+builder.Services.AddSingleton<IRabbitMQService, RabbitMQService>();
+builder.Services.AddTransient<IFavoriteService, FavoriteService>();
+builder.Services.AddHostedService<OrderNotificationService>();
+
+builder.Services.AddScoped<AuditLogActionFilter>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers(x =>
 {
     x.Filters.Add<ExceptionFilter>();
+    x.Filters.Add<AuthorizationFilter>();
+    x.Filters.Add<AuditLogActionFilter>();
+})
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -59,6 +94,119 @@ TypeAdapterConfig<UserUpdateRequest, BuildIT.Services.Database.User>
     .NewConfig()
     .IgnoreNullValues(true);
 
+TypeAdapterConfig<CompanyInsertRequest, BuildIT.Services.Database.Company>
+    .NewConfig();
+
+TypeAdapterConfig<CompanyUpdateRequest, BuildIT.Services.Database.Company>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Company, BuildIT.Model.Models.Company>
+    .NewConfig();
+
+TypeAdapterConfig<ItemInsertRequest, BuildIT.Services.Database.Item>
+    .NewConfig();
+
+TypeAdapterConfig<ItemUpdateRequest, BuildIT.Services.Database.Item>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Item, BuildIT.Model.Models.Item>
+    .NewConfig();
+
+TypeAdapterConfig<CategoryInsertRequest, BuildIT.Services.Database.Category>
+    .NewConfig();
+
+TypeAdapterConfig<CategoryUpdateRequest, BuildIT.Services.Database.Category>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Category, BuildIT.Model.Models.Category>
+    .NewConfig();
+
+TypeAdapterConfig<SubcategoryInsertRequest, BuildIT.Services.Database.Subcategory>
+    .NewConfig();
+
+TypeAdapterConfig<SubcategoryUpdateRequest, BuildIT.Services.Database.Subcategory>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Subcategory, BuildIT.Model.Models.Subcategory>
+    .NewConfig();
+
+TypeAdapterConfig<ListingInsertRequest, BuildIT.Services.Database.Listing>
+    .NewConfig();
+
+TypeAdapterConfig<ListingUpdateRequest, BuildIT.Services.Database.Listing>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Listing, BuildIT.Model.Models.Listing>
+    .NewConfig();
+
+TypeAdapterConfig<CityInsertRequest, BuildIT.Services.Database.City>
+    .NewConfig();
+
+TypeAdapterConfig<CityUpdateRequest, BuildIT.Services.Database.City>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.City, BuildIT.Model.Models.City>
+    .NewConfig();
+
+TypeAdapterConfig<TransactionInsertRequest, BuildIT.Services.Database.Transaction>
+    .NewConfig();
+
+TypeAdapterConfig<TransactionUpdateRequest, BuildIT.Services.Database.Transaction>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Transaction, BuildIT.Model.Models.Transaction>
+    .NewConfig();
+
+TypeAdapterConfig<ReviewInsertRequest, BuildIT.Services.Database.Review>
+    .NewConfig();
+
+TypeAdapterConfig<ReviewUpdateRequest, BuildIT.Services.Database.Review>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Review, BuildIT.Model.Models.Review>
+    .NewConfig();
+
+TypeAdapterConfig<NotificationInsertRequest, BuildIT.Services.Database.Notification>
+    .NewConfig();
+
+TypeAdapterConfig<NotificationUpdateRequest, BuildIT.Services.Database.Notification>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Notification, BuildIT.Model.Models.Notification>
+    .NewConfig();
+
+TypeAdapterConfig<ComplaintInsertRequest, BuildIT.Services.Database.Complaint>
+    .NewConfig();
+
+TypeAdapterConfig<ComplaintUpdateRequest, BuildIT.Services.Database.Complaint>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Complaint, BuildIT.Model.Models.Complaint>
+    .NewConfig();
+
+TypeAdapterConfig<OrderInsertRequest, BuildIT.Services.Database.Order>
+    .NewConfig();
+
+TypeAdapterConfig<OrderUpdateRequest, BuildIT.Services.Database.Order>
+    .NewConfig()
+    .IgnoreNullValues(true);
+
+TypeAdapterConfig<BuildIT.Services.Database.Order, BuildIT.Model.Models.Order>
+    .NewConfig();
+
+TypeAdapterConfig<BuildIT.Services.Database.AuditLog, BuildIT.Model.Models.AuditLog>
+    .NewConfig();
+
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
@@ -84,6 +232,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chathub");
 
 using (var scope = app.Services.CreateScope())
 {
@@ -193,3 +342,9 @@ static void SeedData(BuildITDbContext context, ILogger logger)
         logger.LogError(ex, "Error seeding data: {Message}", ex.Message);
     }
 }
+
+TypeAdapterConfig<FavoriteInsertRequest, BuildIT.Services.Database.Favorite>
+    .NewConfig();
+
+TypeAdapterConfig<BuildIT.Services.Database.Favorite, BuildIT.Model.Models.Favorite>
+    .NewConfig();

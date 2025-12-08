@@ -24,6 +24,12 @@ namespace BuildIT.Controllers
         {
             return _service.Update(id, request);
         }
+
+        [HttpDelete("{id}")]
+        public virtual IActionResult Delete(int id)
+        {
+            throw new NotImplementedException("Delete metoda mora biti implementirana u derived klasi.");
+        }
     }
 }
 
